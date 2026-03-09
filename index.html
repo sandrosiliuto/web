@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandro Siliuto | Art & Technology Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        ::selection { background: rgba(0, 229, 255, 0.2); color: #00e5ff; }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00e5ff;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link:hover { color: #00e5ff; transform: translateY(-2px); }
+
+        .btn-primary {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+        }
+
+        .project-card {
+            transition: transform 0.5s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+        .project-card img {
+            transition: transform 0.7s ease, opacity 0.5s ease;
+        }
+        .project-card:hover img {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+        .project-overlay {
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .project-card:hover .project-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .testimonial-card {
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Modal Animations */
+        @keyframes modal-enter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-modal-enter {
+            animation: modal-enter 0.3s ease-out forwards;
+        }
+
+        @keyframes pulse-cyan {
+            0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+        }
+        .active-dot { animation: pulse-cyan 2s infinite; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        const App = () => {
+            const [activeCategory, setActiveCategory] = useState('Todos');
+            const [scrolled, setScrolled] = useState(false);
+            const [selectedProject, setSelectedProject] = useState(null);
+
+            const playHoverSound = useCallback(() => {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.1);
+                } catch (e) {}
+            }, []);
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const categories = ['Todos', 'I+D', 'VR', '3D', 'Branding'];
+
+            const projects = [
+                { 
+                    title: "Video Mapping", 
+                    category: "I+D", 
+                    sub: "Videomapping · Fachadas", 
+                    img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800", 
+                    description: "Desarrollo de proyecciones arquitectónicas de gran formato, integrando narrativa visual con la geometría del edificio. Actualmente desarrollamos proyectos de arte digital con ELEKTRART en Bilbao.",
+                    gallery: ["https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600", "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600", "https://images.unsplash.com/photo-1514525253344-781f7a712627?w=600", "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600", "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600", "https://images.unsplash.com/photo-1459749411177-042180ce6742?w=600"]
+                },
+                { 
+                    title: "Realidad Virtual", 
+                    category: "VR", 
+                    sub: "VR · AR · Inmersión", 
+                    img: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=800", 
+                    color: "#a855f7",
+                    description: "Experiencias inmersivas diseñadas para museos y eventos corporativos utilizando tecnologías de vanguardia como Meta Quest y Unreal Engine.",
+                    gallery: ["https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=600", "https://images.unsplash.com/photo-1592477976562-4c3c97829214?w=600", "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=600", "https://images.unsplash.com/photo-1626387346567-7988aa98939c?w=600", "https://images.unsplash.com/photo-1633540879425-22d7448a09bc?w=600", "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=600"]
+                },
+                { 
+                    title: "Modelado & Animación 3D", 
+                    category: "3D", 
+                    sub: "Motion Graphics", 
+                    img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800", 
+                    color: "#22c55e",
+                    description: "Creación de assets digitales de alta fidelidad y animaciones fluidas para publicidad y entornos de videojuegos.",
+                    gallery: ["https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=600", "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600", "https://images.unsplash.com/photo-1563089145-599997674d42?w=600", "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=600", "https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=600"]
+                },
+                { 
+                    title: "Fotogrametría & Drones", 
+                    category: "I+D", 
+                    sub: "Digitalización 3D", 
+                    img: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=800",
+                    description: "Escaneado 3D de entornos reales mediante drones y software de fotogrametría para gemelos digitales.",
+                    gallery: ["https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=600", "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600", "https://images.unsplash.com/photo-1506905919346-ad9213d582f8?w=600", "https://images.unsplash.com/photo-1473960103265-dca8371c46bb?w=600", "https://images.unsplash.com/photo-1527977966376-1c8418f9f108?w=600", "https://images.unsplash.com/photo-1524143924409-76077977a469?w=600"]
+                },
+                { 
+                    title: "Impresión 3D", 
+                    category: "3D", 
+                    sub: "Prototipado Digital", 
+                    img: "https://images.unsplash.com/photo-1615800087659-19578e5f5c14?w=800", 
+                    color: "#22c55e",
+                    description: "Del modelo digital al objeto físico. Especialización en prototipos complejos y piezas de arte personalizadas.",
+                    gallery: ["https://images.unsplash.com/photo-1615800087659-19578e5f5c14?w=600", "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600", "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=600", "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600", "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600", "https://images.unsplash.com/photo-1581092324631-01139ba18006?w=600"]
+                },
+                { 
+                    title: "Branding & Identidad", 
+                    category: "Branding", 
+                    sub: "Dirección de Arte", 
+                    img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800", 
+                    color: "#f59e0b",
+                    description: "Estrategia visual y creación de sistemas de marca coherentes para proyectos tecnológicos y culturales.",
+                    gallery: ["https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600", "https://images.unsplash.com/photo-1572044162444-ad60f128bde2?w=600", "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?w=600", "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?w=600", "https://images.unsplash.com/photo-1558655146-d09347e92766?w=600", "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600"]
+                }
+            ];
+
+            const Modal = ({ project, onClose }) => {
+                if (!project) return null;
+                return (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
+                        <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={onClose}></div>
+                        <div className="relative bg-[#111] w-full max-w-5xl max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl rounded-lg animate-modal-enter">
+                            <button onClick={onClose} className="absolute top-6 right-6 z-10 w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-cyan-400 hover:text-black rounded-full transition-all">✕</button>
+                            <div className="p-8 md:p-12">
+                                <div className="mb-10">
+                                    <span className="text-cyan-400 text-[10px] font-bold uppercase tracking-[0.4em] mb-4 block">{project.category}</span>
+                                    <h2 className="text-4xl md:text-6xl font-black mb-4">{project.title}</h2>
+                                    <div className="w-20 h-1 bg-cyan-400"></div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                                    {project.gallery.map((img, idx) => (
+                                        <div key={idx} className="aspect-video bg-white/5 overflow-hidden group">
+                                            <img src={img} alt={`${project.title} ${idx}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="border-t border-white/10 pt-10">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">Descripción del Proyecto</h3>
+                                    <p className="text-xl text-gray-300 leading-relaxed font-light">{project.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen">
+                    {/* Top Bar */}
+                    <div className="bg-[#111] border-b border-white/5 py-2 text-[10px] text-gray-500 uppercase tracking-widest px-6">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <span>📍 Tenerife · Londres · Bilbao</span>
+                            <div className="flex gap-4">
+                                <a href="https://instagram.com" onMouseEnter={playHoverSound} className="hover:text-cyan-400 transition-colors">Instagram</a>
+                                <a href="https://linkedin.com" onMouseEnter={playHoverSound} className="hover:text-cyan-400 transition-colors">LinkedIn</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Nav */}
+                    <nav className={`sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-cyan-500/20' : 'bg-transparent py-8'}`}>
+                        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                            <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                                <div className="w-10 h-10 bg-cyan-400 rounded-sm rotate-45 group-hover:rotate-180 transition-all duration-700 flex items-center justify-center overflow-hidden">
+                                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a9d9a028e9f46d269c908e/189fd450f_nuevologo.png" className="-rotate-45 group-hover:-rotate-180 transition-transform duration-700 w-full h-full object-contain p-1" alt="Logo" />
+                                </div>
+                                <h1 className="text-xl font-bold tracking-tighter">SANDRO <span className="text-cyan-400 font-light">SILIUTO</span></h1>
+                            </div>
+                            <div className="hidden md:flex gap-10 items-center">
+                                {['Work', 'Reels', 'Info', 'Contact'].map(item => (
+                                    <a key={item} href={`#${item.toLowerCase()}`} onMouseEnter={playHoverSound} className="nav-link text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{item}</a>
+                                ))}
+                                <div className="w-2 h-2 bg-cyan-400 rounded-full active-dot"></div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <header className="max-w-7xl mx-auto px-6 pt-32 pb-24">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-[1px] bg-cyan-400"></div>
+                            <span className="text-cyan-400 text-[10px] uppercase tracking-[0.4em] font-semibold">Art & Technology Studio</span>
+                        </div>
+                        <h2 className="text-6xl md:text-9xl font-black leading-[0.85] tracking-tighter mb-10">
+                            DIGITAL <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ALCHEMY.</span>
+                        </h2>
+                        <div className="flex flex-wrap gap-6">
+                            <button onClick={() => document.getElementById('work').scrollIntoView({behavior: 'smooth'})} onMouseEnter={playHoverSound} className="btn-primary bg-cyan-400 text-black px-12 py-5 font-bold text-xs uppercase tracking-widest">Explorar Proyectos</button>
+                            <a href="mailto:ssiliutodesign@gmail.com" onMouseEnter={playHoverSound} className="btn-primary border border-white/20 hover:border-cyan-400 px-12 py-5 font-bold text-xs uppercase tracking-widest flex items-center justify-center">Let's Talk</a>
+                        </div>
+                    </header>
+
+                    {/* Portfolio */}
+                    <section id="work" className="max-w-7xl mx-auto px-6 mb-32">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16">
+                            <div><h3 className="text-4xl font-bold mb-4">Portfolio</h3><div className="w-10 h-1 bg-cyan-400"></div></div>
+                            <div className="flex flex-wrap gap-2">
+                                {categories.map(cat => (
+                                    <button key={cat} onClick={() => { setActiveCategory(cat); playHoverSound(); }} className={`px-8 py-3 text-[10px] font-bold uppercase tracking-widest transition-all border ${activeCategory === cat ? 'bg-white text-black border-white' : 'border-white/10 text-gray-500 hover:border-cyan-400 hover:text-cyan-400'}`}>{cat}</button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {projects.filter(p => activeCategory === 'Todos' || p.category === activeCategory).map((p, i) => (
+                                <div key={i} onClick={() => { setSelectedProject(p); playHoverSound(); }} className="project-card group relative bg-[#111] aspect-[3/4] overflow-hidden cursor-pointer rounded-sm border border-white/5">
+                                    <img src={p.img} alt={p.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0" />
+                                    <div className="project-overlay absolute inset-0 flex flex-col justify-end p-10 bg-gradient-to-t from-black via-black/20 to-transparent">
+                                        <span className="text-cyan-400 text-[9px] font-bold uppercase tracking-widest mb-2">{p.category}</span>
+                                        <h4 className="text-3xl font-bold mb-4">{p.title}</h4>
+                                        <div className="flex items-center gap-3"><div className="w-6 h-[1px] bg-white/30 group-hover:w-12 transition-all"></div><span className="text-[10px] text-white/50 uppercase tracking-[0.3em]">Ver Proyecto</span></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Testimonials */}
+                    <section className="bg-[#080808] py-32 border-y border-white/5">
+                        <div className="max-w-7xl mx-auto px-6">
+                            <h3 className="text-sm font-bold uppercase tracking-[0.5em] text-cyan-400 mb-16 text-center">LO QUE DICEN DE MI</h3>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="testimonial-card p-12 rounded-sm relative overflow-hidden group">
+                                    <div className="text-6xl text-white/5 absolute -top-4 -left-2 font-black italic">"</div>
+                                    <p className="text-gray-400 italic text-lg leading-relaxed mb-8 relative z-10">
+                                        "Sandro es un visionario digital. Su capacidad para transformar conceptos abstractos en experiencias visuales inmersivas es simplemente inigualable."
+                                    </p>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-[1px] bg-cyan-400"></div>
+                                        <span className="text-xs font-bold uppercase tracking-widest">JOSE · Creative Director</span>
+                                    </div>
+                                </div>
+                                <div className="testimonial-card p-12 rounded-sm relative overflow-hidden group">
+                                    <div className="text-6xl text-white/5 absolute -top-4 -left-2 font-black italic">"</div>
+                                    <p className="text-gray-400 italic text-lg leading-relaxed mb-8 relative z-10">
+                                        "Trabajar con él es descubrir nuevas dimensiones tecnológicas. Su maestría en el videomapping y el arte digital eleva cualquier proyecto."
+                                    </p>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-[1px] bg-cyan-400"></div>
+                                        <span className="text-xs font-bold uppercase tracking-widest">ASTORQUIZA · Tech Innovation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Trayectoria & Contacto */}
+                    <section id="info" className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-12">
+                        <div className="bg-[#111] p-12 border border-white/10">
+                            <h3 className="text-3xl font-bold mb-6">Trayectoria Internacional</h3>
+                            <p className="text-gray-400 leading-relaxed mb-4">
+                                Como artista y diseñador de proyección internacional, mi trabajo se centra en la vanguardia de la tecnología aplicada a las artes visuales. Con una sólida formación en los estudios más prestigiosos de <strong>Londres</strong>, he perfeccionado una visión que fusiona el rigor técnico con la experimentación creativa.
+                            </p>
+                            <p className="text-gray-400 leading-relaxed mb-6">
+                                Mi experiencia abarca desde el Reino Unido hasta España, colaborando actualmente con <strong>ELEKTRART en Bilbao</strong> y dirigiendo proyectos de innovación desde mi estudio laboratorio en Tenerife. Mi enfoque es transformar la percepción del espacio a través del videomapping, la VR y el diseño 3D avanzado.
+                            </p>
+                            <p className="text-cyan-400 font-bold uppercase tracking-widest text-xs">✦ Digital Alchemy · London Trained · Global Vision</p>
+                        </div>
+                        <div id="contact" className="bg-[#111] p-12 border border-white/10 flex flex-col justify-center items-center text-center">
+                            <h3 className="text-3xl font-bold mb-2">Get in touch</h3>
+                            <p className="text-gray-500 mb-8 tracking-wide">¿Listo para transformar tu próxima visión en realidad?</p>
+                            <div className="space-y-6">
+                                <a href="mailto:ssiliutodesign@gmail.com" onMouseEnter={playHoverSound} className="block text-cyan-400 text-xl md:text-2xl font-semibold border-b border-cyan-400/30 hover:border-cyan-400 transition-all">
+                                    ssiliutodesign@gmail.com
+                                </a>
+                                <div className="flex flex-col items-center gap-2">
+                                    <span className="text-xs text-gray-500 uppercase tracking-widest">Teléfono Directo</span>
+                                    <a href="tel:+34618514254" className="text-white/80 font-mono text-lg tracking-widest hover:text-cyan-400 transition-colors">+34 618 51 42 54</a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Modal Render */}
+                    {selectedProject && <Modal project={selectedProject} onClose={() => setSelectedProject(null)} />}
+
+                    <footer className="py-12 text-center opacity-30 text-[9px] uppercase tracking-[0.5em]">
+                        © {new Date().getFullYear()} Sandro Siliuto · Studio Art & Tech
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
