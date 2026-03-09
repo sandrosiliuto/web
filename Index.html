@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+
+/**
+ * App: Réplica exacta del sitio de Sandro Siliuto basada en la estructura HTML/CSS proporcionada.
+ * Estética Dark Mode, acentos cian, tipografía Inter y diseño de Art & Technology Studio.
+ */
+const App = () => {
+  const [activeCategory, setActiveCategory] = useState('Todos');
+
+  const categories = ['Todos', 'I+D', 'VR', '3D', 'Branding'];
+
+  const projects = [
+    { title: "Video Mapping", category: "I+D", sub: "Videomapping · Fachadas", img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80" },
+    { title: "Realidad Virtual", category: "VR", sub: "VR · AR · Instalaciones inmersivas", img: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=800&q=80", color: "rgb(168, 85, 247)" },
+    { title: "Modelado & Animación 3D", category: "3D", sub: "Animación · Motion Graphics", img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80", color: "rgb(34, 197, 94)" },
+    { title: "Fotogrametría & Drones", category: "I+D", sub: "Digitalización 3D · Patrimonio", img: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=800&q=80" },
+    { title: "Impresión 3D", category: "3D", sub: "Prototipado · Fabricación digital", img: "https://images.unsplash.com/photo-1615800087659-19578e5f5c14?w=800&q=80", color: "rgb(34, 197, 94)" },
+    { title: "Branding & Identidad", category: "Branding", sub: "Identidad visual · Dirección de arte", img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80", color: "rgb(245, 158, 11)" },
+    { title: "@pixe.l.io · Moda Digital", category: "Branding", sub: "Marca de ropa · Diseño textil", img: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=800&q=80", color: "rgb(245, 158, 11)" },
+    { title: "Custom Sneakers", category: "3D", sub: "Personalización · Arte aplicado", img: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&q=80", color: "rgb(34, 197, 94)" },
+    { title: "Instalaciones Inmersivas", category: "VR", sub: "Arte digital · Experiencias", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", color: "rgb(168, 85, 247)" },
+    { title: "Social Media & Content", category: "Branding", sub: "Marketing · Estrategia visual", img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", color: "rgb(245, 158, 11)" },
+  ];
+
+  const reels = [
+    { title: "Showreel 2024", desc: "Compilación de los mejores proyectos del año" },
+    { title: "Video Mapping Reel", desc: "Proyecciones y mapeos sobre fachadas" },
+    { title: "3D Animation Reel", desc: "Modelado y animación 3D" },
+    { title: "VR Experiences", desc: "Realidad virtual e instalaciones inmersivas" },
+    { title: "Motion Graphics", desc: "Gráficos en movimiento y efectos" },
+    { title: "Fotogrametría", desc: "Digitalización 3D con drones" },
+  ];
+
+  return (
+    <div className="min-h-screen" style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#0a0a0a', color: '#f0f0f0' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::selection { background: rgba(0,229,255,0.2); color: #00e5ff; }
+        .project-card:hover .overlay { transform: translateY(0); }
+        .project-card:hover img { opacity: 0.4; transform: scale(1.05); }
+      `}</style>
+
+      {/* Top Bar */}
+      <div style={{ backgroundColor: '#111', borderBottom: '1px solid #222', padding: '0.6rem 0', fontSize: '0.85rem' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '2rem', color: '#888', flexWrap: 'wrap' }}>
+            <span>📍 Tenerife · Londres · Bilbao</span>
+            <span>✉ ssilutodesign@gmail.com</span>
+            <span>📞 +34 618514254</span>
+          </div>
+          <div style={{ display: 'flex', gap: '1.2rem' }}>
+            {['INSTAGRAM', 'LINKEDIN', 'BEHANCE', 'YOUTUBE'].map(social => (
+              <a key={social} href="#" style={{ color: '#666', textDecoration: 'none', fontSize: '0.8rem', letterSpacing: '0.5px' }}>{social}</a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #1a1a1a', padding: '1.2rem 0', position: 'sticky', top: 0, zIndex: 100, backdropFilter: blur('10px') }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', align_items: 'center', gap: '1rem' }}>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a9d9a028e9f46d269c908e/189fd450f_nuevologo.png" alt="Logo" style={{ width: '52px', height: '52px', objectFit: 'contain' }} />
+            <span style={{ fontSize: '1.4rem', fontWeight: 700, letterSpacing: '-0.02em', color: '#f0f0f0' }}>
+              SANDRO <span style={{ color: '#00e5ff', fontWeight: 300 }}>SILIUTO</span>
+            </span>
+          </div>
+          <div className="hidden md:flex gap-10">
+            {['work', 'reels', 'info', 'contact'].map(item => (
+              <button key={item} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontWeight: 500, fontSize: '0.85rem', letterSpacing: '1.5px', textTransform: 'uppercase' }}>{item}</button>
+            ))}
+          </div>
+          <button className="md:hidden text-white text-2xl">☰</button>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ padding: '5rem 2rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+          <div style={{ width: '3px', height: '60px', background: 'linear-gradient(#00e5ff, #7b2cb1)' }}></div>
+          <span style={{ color: '#00e5ff', fontSize: '0.8rem', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 500 }}>Art & Technology Studio</span>
+        </div>
+        <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 800, lineHeight: 1.1, color: '#f0f0f0', maxWidth: '900px', letterSpacing: '-0.02em' }}>
+          Making visual storytelling<br />
+          <span style={{ color: '#00e5ff' }}>the heart</span> of the experience.
+        </h1>
+        <p style={{ marginTop: '1.8rem', color: '#666', fontSize: '1.1rem', borderLeft: '3px solid #00e5ff', paddingLeft: '1.5rem', maxWidth: '680px', lineHeight: 1.7 }}>
+          I+D · Video Mapping · Realidad Virtual · Branding · Impresión 3D · Modelado & Animación
+        </p>
+        <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <button style={{ backgroundColor: '#00e5ff', color: '#0a0a0a', border: 'none', padding: '0.9rem 2.5rem', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase' }}>Ver proyectos</button>
+          <button style={{ backgroundColor: 'transparent', color: '#00e5ff', border: '2px solid #00e5ff', padding: '0.9rem 2.5rem', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase' }}>Contacto</button>
+        </div>
+      </section>
+
+      {/* Work Grid */}
+      <section id="work" style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem 2rem 4rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 700 }}>Work</h2>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{ 
+                  background: activeCategory === cat ? '#00e5ff' : 'transparent',
+                  color: activeCategory === cat ? '#0a0a0a' : '#666',
+                  border: `1px solid ${activeCategory === cat ? '#00e5ff' : '#333'}`,
+                  padding: '0.4rem 1.2rem', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer'
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2px', backgroundColor: '#1a1a1a', border: '2px solid #1a1a1a' }}>
+          {projects.filter(p => activeCategory === 'Todos' || p.category === activeCategory).map((project, idx) => (
+            <div key={idx} className="project-card" style={{ backgroundColor: '#111', aspectRatio: '4/3', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+              <img src={project.img} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 0.4s' }} />
+              <div style={{ position: 'absolute', top: '12px', left: '12px', backgroundColor: project.color || '#00e5ff', color: '#0a0a0a', padding: '0.2rem 0.7rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '1px' }}>
+                {project.category}
+              </div>
+              <div className="overlay" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.95), transparent)', color: 'white', padding: '2rem 1.2rem 1.2rem', transform: 'translateY(100%)', transition: 'transform 0.3s' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.3rem' }}>{project.title}</h3>
+                <p style={{ fontSize: '0.85rem', color: '#aaa' }}>{project.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Reels Section */}
+      <section id="reels" style={{ backgroundColor: '#0d0d0d', borderTop: '1px solid #1a1a1a', padding: '4rem 0' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 700 }}>Reels</h2>
+            <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to right, #333, transparent)' }}></div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
+            {reels.map((reel, idx) => (
+              <div key={idx} style={{ backgroundColor: '#111', border: '1px solid #1e1e1e', aspectRatio: '16/9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                <div style={{ width: '52px', height: '52px', borderRadius: '50%', border: '2px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <div style={{ width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderLeft: '16px solid #444', marginLeft: '4px' }}></div>
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#e0e0e0', marginBottom: '0.4rem' }}>{reel.title}</h3>
+                <p style={{ fontSize: '0.8rem', color: '#555' }}>{reel.desc}</p>
+                <div style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#333', letterSpacing: '1px', textTransform: 'uppercase' }}>Próximamente</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Info Section */}
+      <section id="info" style={{ backgroundColor: '#0d0d0d', borderTop: '1px solid #1a1a1a', padding: '5rem 0' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+          <div className="grid md:grid-cols-2 gap-16">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a9d9a028e9f46d269c908e/189fd450f_nuevologo.png" alt="Logo" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+                <div>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Sandro Siliuto</h2>
+                  <p style={{ color: '#00e5ff', fontSize: '0.9rem', letterSpacing: '2px', textTransform: 'uppercase' }}>Art & Technology</p>
+                </div>
+              </div>
+              <div style={{ color: '#888', fontSize: '1rem', lineHeight: '1.8' }}>
+                <p style={{ marginBottom: '1.2rem' }}>Licenciado en <strong style={{ color: '#ccc' }}>London College of Communication</strong>, con más de dos décadas creando en la intersección del arte y la tecnología.</p>
+                <p style={{ marginBottom: '1.2rem' }}>Actualmente desarrollo proyectos de arte digital con <strong style={{ color: '#ccc' }}>ELEKTRART en Bilbao</strong>. Mi estudio en Tenerife es un laboratorio de innovación.</p>
+                <p><span style={{ color: '#00e5ff' }}>✦</span> Creative Direction & Visual Innovation</p>
+              </div>
+            </div>
+            <div style={{ backgroundColor: '#111', padding: '3rem', border: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+               <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Get in touch</h3>
+               <p style={{ color: '#666', marginBottom: '2rem' }}>Ready to start your next visual journey?</p>
+               <a href="mailto:ssilutodesign@gmail.com" style={{ color: '#00e5ff', fontSize: '1.2rem', fontWeight: 600, textDecoration: 'none', borderBottom: '1px solid #00e5ff', paddingBottom: '4px' }}>ssilutodesign@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ backgroundColor: '#0a0a0a', padding: '3rem 2rem', borderTop: '1px solid #1a1a1a', textAlign: 'center', color: '#444', fontSize: '0.8rem' }}>
+        <p>© {new Date().getFullYear()} SANDRO SILIUTO · ART & TECHNOLOGY STUDIO</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
