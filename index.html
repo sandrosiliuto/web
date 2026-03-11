@@ -106,6 +106,7 @@
 
             // URL base para las imágenes alojadas en GitHub
             const githubRaw = "https://raw.githubusercontent.com/sandrosiliuto/web/main/";
+            const whatsappLink = "https://wa.me/34618514254?text=Hola%20Sandro,%20me%20gustaría%20solicitar%20un%20presupuesto%20para%20un%20proyecto.";
 
             const playHoverSound = useCallback(() => {
                 try {
@@ -240,8 +241,7 @@
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                             <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.scrollTo(0,0)}>
                                 <div className="w-10 h-10 bg-cyan-400 rounded-sm rotate-45 group-hover:rotate-180 transition-all duration-700 flex items-center justify-center overflow-hidden">
-                                    {/* Logo actualizado con nuevologo.jpg */}
-                                    <img src="nuevologo.jpg" className="-rotate-45 group-hover:-rotate-180 transition-transform duration-700 w-full h-full object-cover" alt="Logo Sandro Siliuto" />
+                                    <img src={`${githubRaw}nuevologo.jpg`} className="-rotate-45 group-hover:-rotate-180 transition-transform duration-700 w-full h-full object-cover" alt="Logo Sandro Siliuto" />
                                 </div>
                                 <h1 className="text-xl font-bold tracking-tighter uppercase">SANDRO <span className="text-cyan-400 font-light">SILIUTO</span></h1>
                             </div>
@@ -249,6 +249,15 @@
                                 {['Work', 'Reels', 'Info', 'Contact'].map(item => (
                                     <a key={item} href={`#${item.toLowerCase()}`} onMouseEnter={playHoverSound} className="nav-link text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{item}</a>
                                 ))}
+                                {/* Botón de Presupuesto Nav */}
+                                <a 
+                                    href={whatsappLink}
+                                    target="_blank"
+                                    onMouseEnter={playHoverSound}
+                                    className="border border-cyan-400 text-cyan-400 px-5 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all"
+                                >
+                                    Solicitar Presupuesto
+                                </a>
                                 <div className="w-2 h-2 bg-cyan-400 rounded-full active-dot"></div>
                             </div>
                         </div>
@@ -266,7 +275,7 @@
                         </h2>
                         <div className="flex flex-wrap gap-6">
                             <button onClick={() => document.getElementById('work').scrollIntoView({behavior: 'smooth'})} onMouseEnter={playHoverSound} className="btn-primary bg-cyan-400 text-black px-12 py-5 font-bold text-xs uppercase tracking-widest">Explorar Proyectos</button>
-                            <a href="mailto:ssiliutodesign@gmail.com" onMouseEnter={playHoverSound} className="btn-primary border border-white/20 hover:border-cyan-400 px-12 py-5 font-bold text-xs uppercase tracking-widest flex items-center justify-center">Let's Talk</a>
+                            <a href={whatsappLink} target="_blank" onMouseEnter={playHoverSound} className="btn-primary border border-white/20 hover:border-cyan-400 px-12 py-5 font-bold text-xs uppercase tracking-widest flex items-center justify-center">Solicitar Presupuesto</a>
                         </div>
                     </header>
 
@@ -338,14 +347,23 @@
                         <div id="contact" className="bg-[#111] p-12 border border-white/10 flex flex-col justify-center items-center text-center">
                             <h3 className="text-3xl font-bold mb-2 uppercase tracking-tighter">Get in touch</h3>
                             <p className="text-gray-500 mb-8 tracking-wide">¿Listo para transformar tu próxima visión en realidad?</p>
-                            <div className="space-y-6">
+                            <div className="space-y-6 w-full flex flex-col items-center">
                                 <a href="mailto:ssiliutodesign@gmail.com" onMouseEnter={playHoverSound} className="block text-cyan-400 text-xl md:text-2xl font-semibold border-b border-cyan-400/30 hover:border-cyan-400 transition-all">
                                     ssiliutodesign@gmail.com
                                 </a>
-                                <div className="flex flex-col items-center gap-2">
+                                <div className="flex flex-col items-center gap-2 mb-6">
                                     <span className="text-xs text-gray-500 uppercase tracking-widest">Teléfono Directo</span>
                                     <a href="tel:+34618514254" className="text-white/80 font-mono text-lg tracking-widest hover:text-cyan-400 transition-colors">+34 618 51 42 54</a>
                                 </div>
+                                {/* Botón Presupuesto Contacto */}
+                                <a 
+                                    href={whatsappLink} 
+                                    target="_blank"
+                                    onMouseEnter={playHoverSound}
+                                    className="bg-cyan-400 text-black px-10 py-4 font-bold text-xs uppercase tracking-widest hover:bg-white transition-all w-full max-w-xs"
+                                >
+                                    Solicitar Presupuesto
+                                </a>
                             </div>
                         </div>
                     </section>
