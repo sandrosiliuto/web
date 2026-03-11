@@ -68,11 +68,6 @@
             transform: translateY(0);
         }
 
-        .testimonial-card {
-            background: linear-gradient(145deg, #111, #0a0a0a);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
         @keyframes modal-enter {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -80,13 +75,6 @@
         .animate-modal-enter {
             animation: modal-enter 0.3s ease-out forwards;
         }
-
-        @keyframes pulse-cyan {
-            0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
-        }
-        .active-dot { animation: pulse-cyan 2s infinite; }
 
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -96,22 +84,18 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useCallback, useRef } = React;
+        const { useState, useEffect } = React;
 
-        // Componente de Imagen Inteligente que prueba múltiples extensiones si falla
+        // Función para convertir enlaces de Google Drive en enlaces de imagen directa
+        const getDriveUrl = (id) => id ? `https://docs.google.com/uc?export=view&id=${id}` : '';
+
         const SmartImage = ({ src, alt, className, fallbackText }) => {
             const [currentSrc, setCurrentSrc] = useState(src);
-            const [attempt, setAttempt] = useState(0);
-            const extensions = ['.jpg', '.JPG', '.png', '.jpeg', '.webp'];
+            const [hasError, setHasError] = useState(false);
 
             const handleError = () => {
-                if (attempt < extensions.length) {
-                    // Extraer base del nombre sin la extensión actual
-                    const base = src.substring(0, src.lastIndexOf('.'));
-                    setCurrentSrc(base + extensions[attempt]);
-                    setAttempt(attempt + 1);
-                } else {
-                    // Si todo falla, usar placeholder estético
+                if (!hasError) {
+                    setHasError(true);
                     setCurrentSrc(`https://via.placeholder.com/800x1000/0a0a0a/00e5ff?text=${encodeURIComponent(fallbackText || 'Sandro Siliuto')}`);
                 }
             };
@@ -122,6 +106,7 @@
                     alt={alt} 
                     className={className} 
                     onError={handleError}
+                    loading="lazy"
                 />
             );
         };
@@ -131,25 +116,20 @@
             const [scrolled, setScrolled] = useState(false);
             const [selectedProject, setSelectedProject] = useState(null);
 
-            const githubRaw = "https://raw.githubusercontent.com/sandrosiliuto/web/main/";
-            const whatsappLink = "https://wa.me/34618514254?text=Hola%20Sandro,%20me%20gustaría%20solicitar%20un%20presupuesto%20para%20un%20proyecto.";
-
-            const playHoverSound = useCallback(() => {
-                try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.1);
-                } catch (e) {}
-            }, []);
+            // WhatsApp y Enlaces
+            const whatsappLink = "https://wa.me/34618514254?text=Hola%20Sandro,%20vengo%20de%20tu%20web%20y%20me%20gustaría%20un%20presupuesto.";
+            
+            // IDs de archivos de Google Drive (Deberás reemplazarlos con los IDs reales de tus archivos en la carpeta compartida)
+            // He puesto marcadores de posición basados en tu estructura.
+            const driveIds = {
+                logo: "1V0p9z6_F6X-O_L8-qW6yO9N0_LwhEr", // Ejemplo de ID de logo
+                impresion3d: "ID_DE_IMAGEN_IMPRESION_3D",
+                personalizaciones: "ID_DE_IMAGEN_PERSONALIZACIONES",
+                videomapping: "ID_DE_IMAGEN_VIDEOMAPPING",
+                vr: "ID_DE_IMAGEN_VR",
+                drones: "ID_DE_IMAGEN_DRONES",
+                cosplay: "ID_DE_IMAGEN_COSPLAY"
+            };
 
             useEffect(() => {
                 const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -164,49 +144,49 @@
                     title: "Impresión 3D", 
                     category: "Impresión 3D", 
                     sub: "FDM · Resina", 
-                    img: `${githubRaw}impresion3d/main.jpg`, 
+                    img: getDriveUrl(driveIds.impresion3d), 
                     description: "Fabricación digital de alta precisión. Especialista en acabados superficiales y prototipado rápido.",
-                    gallery: [`${githubRaw}impresion3d/1.jpg`, `${githubRaw}impresion3d/2.jpg`, `${githubRaw}impresion3d/3.jpg`]
+                    gallery: [getDriveUrl(driveIds.impresion3d)]
                 },
                 { 
                     title: "Personalizaciones", 
                     category: "Personalizaciones", 
                     sub: "Pintura · Modding", 
-                    img: `${githubRaw}personalizaciones/main.jpg`, 
+                    img: getDriveUrl(driveIds.personalizaciones), 
                     description: "Acabados únicos para hardware y objetos cotidianos transformados en piezas de arte.",
-                    gallery: [`${githubRaw}personalizaciones/1.jpg`, `${githubRaw}personalizaciones/2.jpg`]
+                    gallery: [getDriveUrl(driveIds.personalizaciones)]
                 },
                 { 
                     title: "Video Mapping", 
                     category: "Video Mapping", 
                     sub: "Luz · Fachadas", 
-                    img: `${githubRaw}videomapping/main.jpg`, 
+                    img: getDriveUrl(driveIds.videomapping), 
                     description: "Transformación de espacios físicos a través de la proyección volumétrica.",
-                    gallery: [`${githubRaw}videomapping/1.jpg`]
+                    gallery: [getDriveUrl(driveIds.videomapping)]
                 },
                 { 
-                    title: "Infoarquitectura", 
+                    title: "Realidad Virtual", 
                     category: "Realidad Virtual", 
-                    sub: "VR · Reconstrucción", 
-                    img: `${githubRaw}infoarquitectura/LA%20RECONSTRUCCI%C3%93N%20DEL%20MORRINHO/main.jpg`, 
+                    sub: "VR · Morrinho", 
+                    img: getDriveUrl(driveIds.vr), 
                     description: "Experiencias inmersivas y visualización arquitectónica de alto impacto.",
-                    gallery: [`${githubRaw}infoarquitectura/LA%20RECONSTRUCCI%C3%93N%20DEL%20MORRINHO/1.jpg`]
+                    gallery: [getDriveUrl(driveIds.vr)]
                 },
                 { 
                     title: "Drones & I+D", 
                     category: "I+D", 
-                    sub: "FPV · Fotogrametría", 
-                    img: `${githubRaw}drones/main.jpg`,
+                    sub: "FPV · Network Dancers", 
+                    img: getDriveUrl(driveIds.drones),
                     description: "Investigación en captura de datos aéreos y pilotaje de precisión.",
-                    gallery: [`${githubRaw}drones/1.jpg`, `${githubRaw}drones/2.jpg`]
+                    gallery: [getDriveUrl(driveIds.drones)]
                 },
                 { 
                     title: "Cosplay & Props", 
                     category: "Cosplay", 
                     sub: "Fabricación", 
-                    img: `${githubRaw}cosplay/main.jpg`, 
+                    img: getDriveUrl(driveIds.cosplay), 
                     description: "Réplicas de alta fidelidad para cine y coleccionismo.",
-                    gallery: [`${githubRaw}cosplay/1.jpg`, `${githubRaw}cosplay/2.jpg`]
+                    gallery: [getDriveUrl(driveIds.cosplay)]
                 }
             ];
 
@@ -223,13 +203,13 @@
                                     <h2 className="text-4xl md:text-6xl font-black mb-4 uppercase tracking-tighter">{project.title}</h2>
                                     <div className="w-20 h-1 bg-cyan-400"></div>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                                <div className="grid grid-cols-1 gap-4 mb-12">
                                     {project.gallery.map((img, idx) => (
-                                        <div key={idx} className="aspect-square bg-white/5 overflow-hidden group border border-white/5">
+                                        <div key={idx} className="w-full bg-white/5 overflow-hidden border border-white/5">
                                             <SmartImage 
                                                 src={img} 
                                                 alt={`${project.title} ${idx}`} 
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                                className="w-full h-auto object-contain"
                                                 fallbackText={project.title}
                                             />
                                         </div>
@@ -238,6 +218,7 @@
                                 <div className="border-t border-white/10 pt-10">
                                     <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">Descripción del Proyecto</h3>
                                     <p className="text-xl text-gray-300 leading-relaxed font-light">{project.description}</p>
+                                    <a href={whatsappLink} target="_blank" className="inline-block mt-8 bg-cyan-400 text-black px-8 py-3 font-bold text-xs uppercase tracking-widest hover:bg-white transition-all">Consultar presupuesto</a>
                                 </div>
                             </div>
                         </div>
@@ -262,10 +243,10 @@
                     <nav className={`sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-cyan-500/20' : 'bg-transparent py-8'}`}>
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                             <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                                <div className="w-10 h-10 bg-cyan-400 rounded-sm rotate-45 group-hover:rotate-180 transition-all duration-700 flex items-center justify-center overflow-hidden">
+                                <div className="w-10 h-10 bg-black border border-white/10 rounded-sm overflow-hidden flex items-center justify-center">
                                     <SmartImage 
-                                        src={`${githubRaw}nuevologo.jpg`} 
-                                        className="-rotate-45 group-hover:-rotate-180 transition-transform duration-700 w-full h-full object-cover" 
+                                        src={getDriveUrl(driveIds.logo)} 
+                                        className="w-full h-full object-cover" 
                                         alt="Logo Sandro Siliuto"
                                         fallbackText="S"
                                     />
@@ -274,10 +255,9 @@
                             </div>
                             <div className="hidden md:flex gap-10 items-center">
                                 {['Work', 'Info', 'Contact'].map(item => (
-                                    <a key={item} href={`#${item.toLowerCase()}`} onMouseEnter={playHoverSound} className="nav-link text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{item}</a>
+                                    <a key={item} href={`#${item.toLowerCase()}`} className="nav-link text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{item}</a>
                                 ))}
-                                {/* Botón Presupuesto Superior */}
-                                <a href={whatsappLink} target="_blank" onMouseEnter={playHoverSound} className="border border-cyan-400 text-cyan-400 px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all">Presupuesto</a>
+                                <a href={whatsappLink} target="_blank" className="border border-cyan-400 text-cyan-400 px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all">Presupuesto</a>
                             </div>
                         </div>
                     </nav>
@@ -293,15 +273,15 @@
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Alchemy.</span>
                         </h2>
                         <div className="flex flex-wrap gap-6">
-                            <button onClick={() => document.getElementById('work').scrollIntoView({behavior: 'smooth'})} className="btn-primary bg-cyan-400 text-black px-12 py-5 font-bold text-xs uppercase tracking-widest">Mis Proyectos</button>
-                            <a href={whatsappLink} target="_blank" className="btn-primary border border-white/20 hover:border-cyan-400 px-12 py-5 font-bold text-xs uppercase tracking-widest">Hablar por WhatsApp</a>
+                            <button onClick={() => document.getElementById('work').scrollIntoView({behavior: 'smooth'})} className="btn-primary bg-cyan-400 text-black px-12 py-5 font-bold text-xs uppercase tracking-widest">Portafolio</button>
+                            <a href={whatsappLink} target="_blank" className="btn-primary border border-white/20 hover:border-cyan-400 px-12 py-5 font-bold text-xs uppercase tracking-widest">WhatsApp Directo</a>
                         </div>
                     </header>
 
                     {/* Portafolio */}
                     <section id="work" className="max-w-7xl mx-auto px-6 mb-32">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16">
-                            <div><h3 className="text-4xl font-bold mb-4 uppercase tracking-tighter">Portfolio</h3><div className="w-10 h-1 bg-cyan-400"></div></div>
+                            <div><h3 className="text-4xl font-bold mb-4 uppercase tracking-tighter">Proyectos Seleccionados</h3><div className="w-10 h-1 bg-cyan-400"></div></div>
                             <div className="flex flex-wrap gap-2">
                                 {categories.map(cat => (
                                     <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-6 py-2 text-[9px] font-bold uppercase tracking-widest transition-all border ${activeCategory === cat ? 'bg-white text-black border-white' : 'border-white/10 text-gray-500 hover:border-cyan-400 hover:text-cyan-400'}`}>{cat}</button>
@@ -317,35 +297,34 @@
                                         className="w-full h-full object-cover grayscale group-hover:grayscale-0"
                                         fallbackText={p.title}
                                     />
-                                    <div className="project-overlay absolute inset-0 flex flex-col justify-end p-10 bg-gradient-to-t from-black via-black/20 to-transparent">
+                                    <div className="project-overlay absolute inset-0 flex flex-col justify-end p-10 bg-gradient-to-t from-black via-black/40 to-transparent">
                                         <span className="text-cyan-400 text-[9px] font-bold uppercase tracking-widest mb-2">{p.category}</span>
                                         <h4 className="text-3xl font-bold mb-4 uppercase leading-none tracking-tighter">{p.title}</h4>
-                                        <div className="flex items-center gap-3"><div className="w-6 h-[1px] bg-white/30 group-hover:w-12 transition-all"></div><span className="text-[10px] text-white/50 uppercase tracking-[0.3em]">Ver Más</span></div>
+                                        <div className="flex items-center gap-3"><div className="w-6 h-[1px] bg-white/30 group-hover:w-12 transition-all"></div><span className="text-[10px] text-white/50 uppercase tracking-[0.3em]">Explorar</span></div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </section>
 
-                    {/* Contacto */}
+                    {/* Info & Contacto */}
                     <section id="info" className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-12 border-t border-white/5">
                         <div className="bg-[#111] p-12 border border-white/10">
                             <h3 className="text-3xl font-bold mb-6 uppercase tracking-tighter">Sobre el Estudio</h3>
-                            <p className="text-gray-400 leading-relaxed mb-6 italic">
-                                "La tecnología es el pincel del siglo XXI. Mi objetivo es que cada proyecto no solo sea funcional, sino que cuente una historia visual inolvidable."
+                            <p className="text-gray-400 leading-relaxed mb-6">
+                                Especialista en la intersección entre el mundo físico y digital. Con experiencia en Londres, Bilbao y Tenerife, desarrollo soluciones visuales y técnicas para marcas y artistas.
                             </p>
-                            <p className="text-gray-400 leading-relaxed">
-                                Formado en las mejores escuelas de Londres y con base en Tenerife y Bilbao, fusiono la fabricación digital con el arte visual.
-                            </p>
+                            <div className="flex gap-4 items-center">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Disponible para proyectos 2024-2025</span>
+                            </div>
                         </div>
                         <div id="contact" className="bg-[#111] p-12 border border-white/10 flex flex-col justify-center items-center text-center">
-                            <h3 className="text-3xl font-bold mb-2 uppercase tracking-tighter">Contacto Directo</h3>
-                            <p className="text-gray-500 mb-8 tracking-wide">Cuéntame tu idea y te daré un presupuesto sin compromiso.</p>
-                            <div className="space-y-6 w-full flex flex-col items-center">
-                                <a href="mailto:ssiliutodesign@gmail.com" className="block text-cyan-400 text-xl md:text-2xl font-semibold border-b border-cyan-400/30 hover:border-cyan-400 transition-all">
+                            <h3 className="text-3xl font-bold mb-2 uppercase tracking-tighter">¿Hablamos?</h3>
+                            <div className="space-y-6 w-full flex flex-col items-center mt-6">
+                                <a href="mailto:ssiliutodesign@gmail.com" className="text-cyan-400 text-xl md:text-2xl font-semibold border-b border-cyan-400/30 hover:border-cyan-400 transition-all">
                                     ssiliutodesign@gmail.com
                                 </a>
-                                {/* Botón Presupuesto Contacto */}
                                 <a href={whatsappLink} target="_blank" className="bg-cyan-400 text-black px-10 py-4 font-bold text-xs uppercase tracking-widest hover:bg-white transition-all w-full max-w-xs">Solicitar Presupuesto</a>
                                 <span className="text-[10px] text-gray-500 uppercase tracking-[0.3em]">+34 618 51 42 54</span>
                             </div>
@@ -355,7 +334,7 @@
                     {selectedProject && <Modal project={selectedProject} onClose={() => setSelectedProject(null)} />}
 
                     <footer className="py-12 text-center opacity-30 text-[9px] uppercase tracking-[0.5em]">
-                        © {new Date().getFullYear()} Sandro Siliuto · Studio Art & Tech
+                        © {new Date().getFullYear()} Sandro Siliuto · Art & Technology Studio
                     </footer>
                 </div>
             );
