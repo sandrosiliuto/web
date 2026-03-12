@@ -86,6 +86,9 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // Función para convertir enlaces de Google Drive en enlaces de imagen directa
+        const getDriveUrl = (id) => id ? `https://docs.google.com/uc?export=view&id=${id}` : '';
+
         const SmartImage = ({ src, alt, className, fallbackText }) => {
             const [currentSrc, setCurrentSrc] = useState(src);
             const [hasError, setHasError] = useState(false);
@@ -113,8 +116,21 @@
             const [scrolled, setScrolled] = useState(false);
             const [selectedProject, setSelectedProject] = useState(null);
 
+            // WhatsApp y Enlaces
             const whatsappLink = "https://wa.me/34618514254?text=Hola%20Sandro,%20vengo%20de%20tu%20web%20y%20me%20gustaría%20un%20presupuesto.";
             
+            // IDs de archivos de Google Drive (Deberás reemplazarlos con los IDs reales de tus archivos en la carpeta compartida)
+            // He puesto marcadores de posición basados en tu estructura.
+            const driveIds = {
+                logo: "1V0p9z6_F6X-O_L8-qW6yO9N0_LwhEr", // Ejemplo de ID de logo
+                impresion3d: "ID_DE_IMAGEN_IMPRESION_3D",
+                personalizaciones: "ID_DE_IMAGEN_PERSONALIZACIONES",
+                videomapping: "ID_DE_IMAGEN_VIDEOMAPPING",
+                vr: "ID_DE_IMAGEN_VR",
+                drones: "ID_DE_IMAGEN_DRONES",
+                cosplay: "ID_DE_IMAGEN_COSPLAY"
+            };
+
             useEffect(() => {
                 const handleScroll = () => setScrolled(window.scrollY > 50);
                 window.addEventListener('scroll', handleScroll);
@@ -128,49 +144,49 @@
                     title: "Impresión 3D", 
                     category: "Impresión 3D", 
                     sub: "FDM · Resina", 
-                    img: "3131.jpeg", 
+                    img: getDriveUrl(driveIds.impresion3d), 
                     description: "Fabricación digital de alta precisión. Especialista en acabados superficiales y prototipado rápido.",
-                    gallery: ["3131.jpeg"]
+                    gallery: [getDriveUrl(driveIds.impresion3d)]
                 },
                 { 
                     title: "Personalizaciones", 
                     category: "Personalizaciones", 
                     sub: "Pintura · Modding", 
-                    img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800", 
+                    img: getDriveUrl(driveIds.personalizaciones), 
                     description: "Acabados únicos para hardware y objetos cotidianos transformados en piezas de arte.",
-                    gallery: ["https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800"]
+                    gallery: [getDriveUrl(driveIds.personalizaciones)]
                 },
                 { 
                     title: "Video Mapping", 
                     category: "Video Mapping", 
                     sub: "Luz · Fachadas", 
-                    img: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800", 
+                    img: getDriveUrl(driveIds.videomapping), 
                     description: "Transformación de espacios físicos a través de la proyección volumétrica.",
-                    gallery: ["https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800"]
+                    gallery: [getDriveUrl(driveIds.videomapping)]
                 },
                 { 
                     title: "Realidad Virtual", 
                     category: "Realidad Virtual", 
                     sub: "VR · Morrinho", 
-                    img: "https://images.unsplash.com/photo-1478416272538-5f7e51dc5400?auto=format&fit=crop&q=80&w=800", 
+                    img: getDriveUrl(driveIds.vr), 
                     description: "Experiencias inmersivas y visualización arquitectónica de alto impacto.",
-                    gallery: ["https://images.unsplash.com/photo-1478416272538-5f7e51dc5400?auto=format&fit=crop&q=80&w=800"]
+                    gallery: [getDriveUrl(driveIds.vr)]
                 },
                 { 
                     title: "Drones & I+D", 
                     category: "I+D", 
                     sub: "FPV · Network Dancers", 
-                    img: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=800",
+                    img: getDriveUrl(driveIds.drones),
                     description: "Investigación en captura de datos aéreos y pilotaje de precisión.",
-                    gallery: ["https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=800"]
+                    gallery: [getDriveUrl(driveIds.drones)]
                 },
                 { 
                     title: "Cosplay & Props", 
                     category: "Cosplay", 
                     sub: "Fabricación", 
-                    img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&q=80&w=800", 
+                    img: getDriveUrl(driveIds.cosplay), 
                     description: "Réplicas de alta fidelidad para cine y coleccionismo.",
-                    gallery: ["https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&q=80&w=800"]
+                    gallery: [getDriveUrl(driveIds.cosplay)]
                 }
             ];
 
@@ -227,7 +243,14 @@
                     <nav className={`sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/90 backdrop-blur-md py-4 border-b border-cyan-500/20' : 'bg-transparent py-8'}`}>
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                             <div className="flex items-center gap-4 group cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                                <div className="w-10 h-10 bg-black border border-white/10 rounded-sm overflow-hidden flex items-center justify-center font-black text-cyan-400">S</div>
+                                <div className="w-10 h-10 bg-black border border-white/10 rounded-sm overflow-hidden flex items-center justify-center">
+                                    <SmartImage 
+                                        src={getDriveUrl(driveIds.logo)} 
+                                        className="w-full h-full object-cover" 
+                                        alt="Logo Sandro Siliuto"
+                                        fallbackText="S"
+                                    />
+                                </div>
                                 <h1 className="text-xl font-bold tracking-tighter uppercase">SANDRO <span className="text-cyan-400 font-light">SILIUTO</span></h1>
                             </div>
                             <div className="hidden md:flex gap-10 items-center">
