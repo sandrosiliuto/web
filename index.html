@@ -1,31 +1,132 @@
-const projects = [
-    { 
-        title: "Impresión 3D", 
-        category: "Impresión 3D", 
-        sub: "FDM · Resina", 
-        img: "impresion-3d-01.jpg",  // ← cambia por el nombre real que subas
-        description: "...",
-        gallery: [
-            "impresion-3d-01.jpg",
-            "impresion-3d-02.jpg"  // añade más
-        ]
-    },
-    // ... igual para Personalizaciones, Video Mapping, Realidad Virtual
-    { 
-        title: "Drones & I+D", 
-        category: "I+D", 
-        sub: "FPV · Network Dancers", 
-        img: "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(1).png",
-        description: "...",
-        gallery: [
-            "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(1).png",
-            "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(2).jpg",
-            "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(2).png",
-            "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(3).png",
-            "Investigaci%C3%B3n%20%26%20Drones_NetworkDancers07%20(4).png",
-            "Investigaci%C3%B3n%20%26%20Drones_technarte%20(1).jpeg",
-            "Investigaci%C3%B3nDrones_NetworkDancers07%20(1).jpg"
-        ]
-    },
-    // Cosplay igual...
-];
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandro Siliuto | Art & Technology Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        ::selection { background: rgba(0, 229, 255, 0.2); color: #00e5ff; }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00e5ff;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link:hover { color: #00e5ff; transform: translateY(-2px); }
+
+        .btn-primary {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+        }
+
+        .project-card {
+            transition: transform 0.5s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+        .project-card img {
+            transition: transform 0.7s ease, opacity 0.5s ease;
+        }
+        .project-card:hover img {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+        .project-overlay {
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .project-card:hover .project-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes modal-enter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-modal-enter {
+            animation: modal-enter 0.3s ease-out forwards;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const SmartImage = ({ src, alt, className, fallbackText }) => {
+            const [currentSrc, setCurrentSrc] = useState(src);
+            const [hasError, setHasError] = useState(false);
+
+            const handleError = () => {
+                if (!hasError) {
+                    setHasError(true);
+                    setCurrentSrc(`https://via.placeholder.com/800x1000/0a0a0a/00e5ff?text=${encodeURIComponent(fallbackText || 'Sandro Siliuto')}`);
+                }
+            };
+
+            return (
+                <img 
+                    src={currentSrc} 
+                    alt={alt} 
+                    className={className} 
+                    onError={handleError}
+                    loading="lazy"
+                />
+            );
+        };
+
+        const App = () => {
+            const [activeCategory, setActiveCategory] = useState('Todos');
+            const [scrolled, setScrolled] = useState(false);
+            const [selectedProject, setSelectedProject] = useState(null);
+
+            const whatsappLink = "https://wa.me/34618514254?text=Hola%20Sandro,%20vengo%20de%20tu%20web%20y%20me%20gustaría%20un%20presupuesto.";
+            
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const categories = ['Todos', 'Impresión 3D', 'Personalizaciones', 'Video Mapping', 'Realidad Virtual', 'Branding', 'I+D', 'Cosplay'];
+
+            const projects = [
+                { 
+                    title: "Impresión 3D", 
+                    category: "Impresión 3D", 
+                    sub: "FDM · Resina", 
+                    img: "impresion3d_energie%20(1).jpeg", 
+                    description: "Fabricación digital de alta precisión. Especialista en acabados superficiales y prototipado rápido.",
